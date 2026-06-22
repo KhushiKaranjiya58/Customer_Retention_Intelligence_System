@@ -1,5 +1,6 @@
 from utils import load_model
 import pandas as pd
+import matplotlib.pyplot as plt
 
 model = load_model()
 
@@ -17,111 +18,147 @@ st.success("Model Loaded Successfully ✅")
 
 st.header("Customer Information")
 
-gender = st.selectbox(
-    "Gender",
-    ["Male", "Female"]
-)
+col1, col2, col3 = st.columns([1,1,1], gap="large")
 
-tenure = st.slider(
-    "Tenure Months",
-    1,
-    72,
-    12
-)
+# ================= COLUMN 1 =================
 
-monthly_charges = st.number_input(
-    "Monthly Charges",
-    min_value=0.0,
-    value=50.0
-)
+with col1:
 
+    st.markdown("### 👤 Customer Details")
 
-senior_citizen = st.selectbox("Senior Citizen", ["Yes", "No"])
+    gender = st.selectbox(
+        "Gender",
+        ["Male", "Female"]
+    )
 
-partner = st.selectbox("Partner", ["Yes", "No"])
+    senior_citizen = st.selectbox(
+        "Senior Citizen",
+        ["Yes", "No"]
+    )
 
-dependents = st.selectbox("Dependents", ["Yes", "No"])
+    partner = st.selectbox(
+        "Partner",
+        ["Yes", "No"]
+    )
 
-phone_service = st.selectbox(
-    "Phone Service",
-    ["Yes", "No"]
-)
+    dependents = st.selectbox(
+        "Dependents",
+        ["Yes", "No"]
+    )
 
-multiple_lines = st.selectbox(
-    "Multiple Lines",
-    ["Yes", "No", "No phone service"]
-)
+    tenure = st.slider(
+        "Tenure Months",
+        1,
+        72,
+        12
+    )
+# ================= COLUMN 2 =================
 
-internet_service = st.selectbox(
-    "Internet Service",
-    ["DSL", "Fiber optic", "No"]
-)
+with col2:
 
-online_security = st.selectbox(
-    "Online Security",
-    ["Yes", "No", "No internet service"]
-)
+    st.markdown("### 🌐 Services")
 
-online_backup = st.selectbox(
-    "Online Backup",
-    ["Yes", "No", "No internet service"]
-)
+    phone_service = st.selectbox(
+        "Phone Service",
+        ["Yes", "No"]
+    )
 
-device_protection = st.selectbox(
-    "Device Protection",
-    ["Yes", "No", "No internet service"]
-)
+    multiple_lines = st.selectbox(
+        "Multiple Lines",
+        ["Yes", "No", "No phone service"]
+    )
 
-tech_support = st.selectbox(
-    "Tech Support",
-    ["Yes", "No", "No internet service"]
-)
+    internet_service = st.selectbox(
+        "Internet Service",
+        ["DSL", "Fiber optic", "No"]
+    )
 
-streaming_tv = st.selectbox(
-    "Streaming TV",
-    ["Yes", "No", "No internet service"]
-)
+    online_security = st.selectbox(
+        "Online Security",
+        ["Yes", "No", "No internet service"]
+    )
 
-streaming_movies = st.selectbox(
-    "Streaming Movies",
-    ["Yes", "No", "No internet service"]
-)
+    online_backup = st.selectbox(
+        "Online Backup",
+        ["Yes", "No", "No internet service"]
+    )
 
-contract = st.selectbox(
-    "Contract",
-    ["Month-to-month", "One year", "Two year"]
-)
+    device_protection = st.selectbox(
+        "Device Protection",
+        ["Yes", "No", "No internet service"]
+    )
 
-paperless_billing = st.selectbox(
-    "Paperless Billing",
-    ["Yes", "No"]
-)
+    tech_support = st.selectbox(
+        "Tech Support",
+        ["Yes", "No", "No internet service"]
+    )
 
-payment_method = st.selectbox(
-    "Payment Method",
-    [
-        "Electronic check",
-        "Mailed check",
-        "Bank transfer (automatic)",
-        "Credit card (automatic)"
-    ]
-)
+# ================= COLUMN 3 =================
 
-cltv = st.number_input(
-    "CLTV",
-    min_value=2000,
-    max_value=7000,
-    value=4000
-)
+with col3:
 
-engagement_score = st.slider(
-    "Engagement Score",
-    0,
-    6,
-    3
-)
+    st.markdown("### 💳 Billing & Contract")
 
-if st.button("Predict Churn"):
+    streaming_tv = st.selectbox(
+        "Streaming TV",
+        ["Yes", "No", "No internet service"]
+    )
+
+    streaming_movies = st.selectbox(
+        "Streaming Movies",
+        ["Yes", "No", "No internet service"]
+    )
+
+    contract = st.selectbox(
+        "Contract",
+        ["Month-to-month", "One year", "Two year"]
+    )
+
+    paperless_billing = st.selectbox(
+        "Paperless Billing",
+        ["Yes", "No"]
+    )
+
+    payment_method = st.selectbox(
+        "Payment Method",
+        [
+            "Electronic check",
+            "Mailed check",
+            "Bank transfer (automatic)",
+            "Credit card (automatic)"
+        ]
+    )
+
+    monthly_charges = st.number_input(
+        "Monthly Charges",
+        min_value=0.0,
+        value=50.0
+    )
+
+    cltv = st.number_input(
+        "CLTV",
+        min_value=2000,
+        max_value=7000,
+        value=4000
+    )
+
+    engagement_score = st.slider(
+        "Engagement Score",
+        0,
+        6,
+        3
+    )
+
+c1, c2, c3 = st.columns([2,1,2])
+
+with c2:
+    predict = st.button(
+        "🚀 Predict Churn",
+        use_container_width=True
+    )
+        
+
+if predict:
 
     customer_data = pd.DataFrame({
         "Gender": [gender],
@@ -149,8 +186,7 @@ if st.button("Predict Churn"):
 
     probability = model.predict_proba(customer_data)[0][1]
 
-    st.write("Churn Probability:", probability)
-
+    # Risk Tier
     if probability >= 0.70:
         risk_tier = "High Risk"
     elif probability >= 0.40:
@@ -158,8 +194,7 @@ if st.button("Predict Churn"):
     else:
         risk_tier = "Low Risk"
 
-    st.write("Risk Tier:", risk_tier)
-
+    # Customer Segment
     if tenure <= 12 and probability >= 0.60:
         segment = "New Customer At-Risk"
 
@@ -175,19 +210,14 @@ if st.button("Predict Churn"):
     else:
         segment = "Loyal Customer"
 
-    st.write("Customer Segment:", segment)
-
+    # Priority Score
     retention_priority_score = (
         probability
         * cltv
         * (1 + (72 - tenure)/72)
     )
 
-    st.write(
-        "Retention Priority Score:",
-        round(retention_priority_score, 2)
-    )
-
+    # Recommendations
     recommendations = []
 
     if probability >= 0.70:
@@ -219,7 +249,87 @@ if st.button("Predict Churn"):
         recommendations.append(
             "Customer is healthy. Maintain loyalty program."
         )
-    st.subheader("Retention Recommendations")
+
+    st.divider()
+
+    st.header("📈 Prediction Dashboard")
+
+    r1, r2, r3, r4 = st.columns(4)
+
+    with r1:
+        st.metric(
+            "Churn Probability",
+            f"{probability*100:.2f}%"
+        )
+
+    with r2:
+        st.metric(
+            "Risk Tier",
+            risk_tier
+        )
+
+    with r3:
+        st.metric(
+            "Customer Segment",
+            segment
+        )
+
+    with r4:
+        st.metric(
+            "Priority Score",
+            round(retention_priority_score, 2)
+        )
+
+    if risk_tier == "High Risk":
+        st.error("🔴 High Risk Customer")
+
+    elif risk_tier == "Medium Risk":
+        st.warning("🟠 Medium Risk Customer")
+
+    else:
+        st.success("🟢 Low Risk Customer")
+
+    st.subheader("Customer Risk Score")
+    st.progress(int(probability * 100))
+
+    st.subheader("📊 Churn Visualization")
+
+    graph_col1, graph_col2 = st.columns([1, 1])
+
+    with graph_col1:
+
+        fig, ax = plt.subplots(figsize=(4,3))
+
+        bars = ax.bar(
+            ["Retain", "Churn"],
+            [1-probability, probability]
+        )
+
+        for bar in bars:
+
+            height = bar.get_height()
+
+            ax.text(
+                bar.get_x() + bar.get_width()/2,
+                height,
+                f"{height:.2f}",
+                ha="center"
+            )
+
+        ax.set_ylabel("Probability")
+        ax.set_title("Customer Churn Prediction")
+
+        st.pyplot(fig)
+
+    with graph_col2:
+
+        st.info(f"Risk Tier: {risk_tier}")
+        st.info(f"Customer Segment: {segment}")
+        st.info(
+            f"Priority Score: {round(retention_priority_score,2)}"
+        )
+
+    st.subheader("🎯 Retention Recommendations")
 
     for rec in recommendations:
         st.write("✅", rec)
